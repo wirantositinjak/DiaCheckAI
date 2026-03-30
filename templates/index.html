@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Klasifikasi Diabetes | Prediksi AI</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-hover: #7c3aed;
+            --secondary: #0ea5e9;
+            --bg-dark: #0f172a;
+            --bg-darker: #0b1120;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            overflow-x: hidden;
+            position: relative;
+            padding-top: 70px;
+            /* offset for fixed navbar */
+        }
+
+        /* Navbar */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 70px;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--glass-border);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-links a {
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .btn-nav {
+            background: var(--primary);
+            color: white !important;
+            padding: 0.5rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .btn-nav:hover {
+            background: var(--primary-hover);
+        }
+
+        /* Utilities */
+        section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 6rem 0;
+        }
+
+        .section-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            z-index: 10;
+        }
+
+        /* Hero Section */
+        #beranda {
+            min-height: calc(100vh - 70px);
+            background: radial-gradient(circle at top right, rgba(139, 92, 246, 0.15), transparent 40%),
+                radial-gradient(circle at bottom left, rgba(14, 165, 233, 0.15), transparent 40%);
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+            background: linear-gradient(135deg, #f8fafc, #94a3b8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto 2.5rem auto;
+            line-height: 1.6;
+        }
+
+        .hero-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: inline-block;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.5);
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px -5px rgba(139, 92, 246, 0.6);
+        }
+
+        /* About Section */
+        #tentang {
+            background: var(--bg-darker);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            min-height: 80vh;
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: white;
+            background: linear-gradient(135deg, #a78bfa, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .about-text p {
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            line-height: 1.7;
+        }
+
+        .about-image {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* Prediction Section */
+        #prediksi {
+            position: relative;
+            min-height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Ambient Blobs for Prediction Area */
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: 20%;
+            left: -100px;
+        }
+
+        .blob-2 {
+            width: 500px;
+            height: 500px;
+            background: var(--secondary);
+            bottom: 10%;
+            right: -100px;
+            animation: pulse 10s infinite alternate;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+
+            100% {
+                transform: scale(1.1);
+            }
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        @media (max-width: 900px) {
+
+            .grid-container,
+            .about-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero-title {
+                font-size: 3rem;
+            }
+        }
+
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            height: 100%;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 35px 60px -15px rgba(0, 0, 0, 0.6);
+        }
+
+        h2.card-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, #a78bfa, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Form Elements */
+        .form-grid-inner {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid-inner {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        input {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 0.8rem 1rem;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-submit {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-submit:hover {
+            opacity: 0.9;
+            transform: scale(1.02);
+            box-shadow: 0 10px 15px -3px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Sidebar Info */
+        .info-card {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .features-list {
+            margin-left: 1.5rem;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .features-list li {
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer / Developers */
+        footer {
+            background: #060913;
+            padding: 4rem 0 2rem 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .footer-title {
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #a78bfa, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline-block;
+        }
+
+        .dev-profile {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .dev-img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--primary);
+            margin-bottom: 0.5rem;
+            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-top: 0.5rem;
+        }
+
+        .social-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s;
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+            text-decoration: underline;
+        }
+
+        .copyright {
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+        }
+
+        /* Customizing SweetAlert for Dark theme */
+        .swal2-popup {
+            background: #1e293b !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            border-radius: 24px !important;
+            color: #f8fafc !important;
+        }
+
+        .swal2-title,
+        .swal2-html-container {
+            color: #f8fafc !important;
+        }
+
+        .swal2-confirm {
+            background: var(--primary) !important;
+            border-radius: 8px !important;
+        }
+
+        .swal2-cancel {
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: white !important;
+            border-radius: 8px !important;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-container">
+            <a href="#beranda" class="logo">DiaCheck AI</a>
+            <ul class="nav-links">
+                <li><a href="#beranda">Beranda</a></li>
+                <li><a href="#tentang">Sistem Model</a></li>
+                <li><a href="#prediksi">Prediksi Algoritma</a></li>
+                <li><a href="#developers" class="btn-nav">Mulai</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <header id="beranda">
+        <div class="section-container">
+            <h1 class="hero-title">Cerdas. Akurat. Peduli.</h1>
+            <p class="hero-subtitle">Masa depan deteksi dini ada di tangan Anda. Gunakan teknologi Machine Learning
+                canggih untuk memprediksi probabilitas metrik diabetes secara akurat berdasarkan riwayat medis yang
+                valid.</p>
+            <a href="#prediksi" class="hero-btn">Deteksi Parameter Sekarang</a>
+        </div>
+    </header>
+
+    <!-- About Section -->
+    <section id="tentang">
+        <div class="section-container">
+            <div class="about-grid">
+                <div class="about-text">
+                    <h2>Mekanisme Artificial Intelligence</h2>
+                    <p>Prediksi ini dibekali dengan metode komputasi berbasis <b>Gaussian Naive Bayes</b> yang berpegang
+                        pada penalaran teorema probabilitas bayesian. Alih-alih menerka secara asal, Machine Learning
+                        ini telah dilatih secara iteratif menggunakan dataset saintifik <i>"Pima Indians Diabetes
+                            Database"</i>.</p>
+                    <p>Sistem merangkai hubungan prediktif antara kondisi pasien, pola riwayat demografis, dan hasil
+                        metrik yang nantinya disajikan dalam angka akurasi nyata.</p>
+
+                    <div class="stats-grid" style="margin-top: 2rem;">
+                        <div class="stat-box">
+                            <div class="stat-value">76.4%</div>
+                            <div class="stat-label">Model Accuracy</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">68.0%</div>
+                            <div class="stat-label">Precision Rate</div>
+                        </div>
+                        <div class="stat-box">
+                            <div class="stat-value">61.2%</div>
+                            <div class="stat-label">Recall Status</div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <!-- Visual Image Instead of Modal -->
+                    <img class="about-image" src="{{ url_for('static', filename='img/how-it-work.jpeg')}}"
+                        alt="Arsitektur Model Machine Learning">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Prediction Section -->
+    <section id="prediksi">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="section-container grid-container">
+            <!-- Input Form -->
+            <div class="glass-card">
+                <h2 class="card-title">Kalkulator Prediksi</h2>
+                <p style="color: var(--text-muted); margin-bottom: 2rem;">Masukkan parameter data metrik biologis secara
+                    akurat guna memaksimalkan hasil kalkulasi tingkat penyakit.</p>
+
+                <form id="form-predict">
+                    <div class="form-grid-inner">
+                        <div class="input-group">
+                            <label for="inputPregnancies">Kehamilan</label>
+                            <input type="number" id="inputPregnancies" name="Pregnancies" placeholder="Indeks Kehamilan"
+                                step="1" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputGlucose">Kadar Glukosa</label>
+                            <input type="number" id="inputGlucose" name="Glucose" placeholder="Level Glukosa Plasma"
+                                step="1" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputBloodPressure">Tekanan Darah</label>
+                            <input type="number" id="inputBloodPressure" name="BloodPressure"
+                                placeholder="Diastolik (mmHg)" step="1" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputSkinThickness">Tebal Kulit</label>
+                            <input type="number" id="inputSkinThickness" name="SkinThickness"
+                                placeholder="Lipatan Kulit Trisep" step="1" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputInsulin">Insulin Serum</label>
+                            <input type="number" id="inputInsulin" name="Insulin" placeholder="Ukuran Insulin (muU)"
+                                step="1" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputBMI">Perhitungan BMI</label>
+                            <input type="number" id="inputBMI" name="BMI" placeholder="Massa Tubuh" step="0.01"
+                                required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputDiabetesPedigreeFunction">Fungsi Silsilah (Genetik)</label>
+                            <input type="number" id="inputDiabetesPedigreeFunction" name="DiabetesPedigreeFunction"
+                                placeholder="Riwayat Genetik (PDF)" step="0.001" required />
+                        </div>
+                        <div class="input-group">
+                            <label for="inputAge">Umur Aktual</label>
+                            <input type="number" id="inputAge" name="Age" placeholder="Tahun" step="1" required />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn-submit">Proses Parameter Form</button>
+                </form>
+            </div>
+
+            <!-- Information Column -->
+            <div class="glass-card info-card">
+                <h2 class="card-title">Parameter Acuan</h2>
+                <p>Fitur data pengaman dalam sistem ini didasarkan pada metrik kesehatan terstandarisasi untuk
+                    probabilitas valid:</p>
+
+                <ol class="features-list">
+                    <li><b>Kehamilan:</b> Secara indikatif frekuensi kehamilan berkolerasi dengan ancaman diabetes
+                        gestasional.</li>
+                    <li><b>Glukosa:</b> Konsentrasi volume glukosa plasma 2 jam dalam tes toleransi oral.</li>
+                    <li><b>Tekanan Darah:</b> Perhitungan nilai dari Tekanan darah diastolik (mm Hg).</li>
+                    <li><b>Ketebalan Kulit:</b> Ketebalan ketat dari lipatan kulit trisep (mm).</li>
+                    <li><b>Insulin:</b> Hasil murni dari tes Insulin serum 2 jam (mu U/ml).</li>
+                    <li><b>BMI:</b> Indeks massa fisik tubuh diukur dari perhitungan (berat dalam kg / tinggi dalam
+                        meter kuadrat).</li>
+                    <li><b>Fungsi Silsilah:</b> Algoritma genetika khusus yang menimbang bobot persentase diabetes
+                        keluarga.</li>
+                    <li><b>Umur:</b> Umur usia subjek (tahun).</li>
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="developers">
+        <div class="section-container">
+            <h3 class="footer-title">Dirancang dan Dibangun Oleh</h3>
+            <div class="dev-profile">
+                <img class="dev-img" src="https://www.gravatar.com/avatar/12345?d=monsterid" alt="Wiranto">
+                <h4 style="color:#fff; font-size: 1.2rem;">Wiranto Millennium S</h4>
+                <div class="social-links">
+                    <a href="https://www.linkedin.com/in/wirantomillennium/" target="_blank">Profil LinkedIn</a>
+                    <span>•</span>
+                    <a href="https://github.com/wirantositinjak" target="_blank">Profil Github</a>
+                </div>
+            </div>
+            <p class="copyright">&copy; 2026 DiaCheck AI. Ditenagai oleh Scikit-Learn (Gaussian Naive Bayes).</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='sweetalert2-9.4.3/package/dist/sweetalert2.all.min.js')}}"></script>
+
+    <script>
+        // Form Submission Logic
+        const formPredict = document.getElementById('form-predict');
+
+        formPredict.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(formPredict);
+
+            try {
+                // Show loading indicator
+                Swal.fire({
+                    title: 'Memproses AI...',
+                    text: 'Menganalisa probabilitas melalui algoritma Gaussian NB',
+                    allowOutsideClick: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    customClass: {
+                        popup: 'swal2-dark' // Make sure it uses dark theme
+                    }
+                });
+
+                const response = await fetch("{{ url_for('predict')}}", {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) throw new Error("Terjadi kesalahan komputasi");
+
+                const res = await response.json();
+                const isDiabetic = res.prediction_text === "1";
+
+                Swal.fire({
+                    icon: isDiabetic ? "error" : "success",
+                    title: isDiabetic ? "Indikasi Penyakit" : "Kondisi Baik/Sehat",
+                    text: isDiabetic
+                        ? "Berdasarkan rujukan komputasi analisis sistem klasifikasi AI, pasien diprediksi memiliki pola metrik penderita penyakit serius diabetes. Sangat disarankan untuk berkonsultasi secara menyeluruh dengan dokter ahli / spesialis."
+                        : "Analisis sistematis kami menunjukkan nilai pada semua bagian metrik vital pasien tidak mirip dengan yang dimiliki penderita diabetes. Tetap pertahankan dan jaga pola hidup sehat Anda!",
+                    showCancelButton: true,
+                    cancelButtonText: "Tutup Prediksi",
+                    confirmButtonText: "Lihat Akurasi Prediksi",
+                    reverseButtons: true,
+                    customClass: {
+                        popup: 'swal2-dark'
+                    }
+                }).then((resultAction) => {
+                    if (resultAction.isConfirmed) {
+                        Swal.fire({
+                            title: "Nilai Skor Kepastian Probabilitas",
+                            text: res.proba,
+                            icon: "info",
+                            showCancelButton: false,
+                            confirmButtonText: "Tutup",
+                            customClass: {
+                                popup: 'swal2-dark'
+                            }
+                        });
+                    }
+                });
+
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: "error",
+                    title: "Kesalahan Jaringan Internal",
+                    text: "Tidak dapat menghubungkan jaringan ke server web/Flask App. Periksa konfigurasi.",
+                    customClass: {
+                        popup: 'swal2-dark'
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+
+</html>

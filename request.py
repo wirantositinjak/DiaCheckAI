@@ -1,0 +1,1 @@
+import requests, jsonurl = 'http://0.0.0.0:5000/api/'#Ambil contoh data dari file diabetes csvdata = [[6.0, 148.0, 72.0, 35.0, 0.0, 33.6, 0.627, 50.0]]j_data = json.dumps(data)headers = {'content-type': 'application/json', 'Accept-Charset': 'UTF-8'}r = requests.post(url, data=j_data, headers=headers)print(r,r.text)
