@@ -28,6 +28,22 @@ Cerdas. Akurat. Peduli. **DiaCheck AI** adalah aplikasi web berbasis *Machine Le
 
 ---
 
+## 📸 Cuplikan Aplikasi (Screenshots)
+
+| Halaman Utama | Form Prediksi |
+| :---: | :---: |
+| <img src="static/img/homepage.png" width="100%"> | <img src="static/img/form-prediksi.png" width="100%"> |
+
+| Hasil Prediksi | Mekanisme Sistem |
+| :---: | :---: |
+| <img src="static/img/hasil-prediksi.png" width="100%"> | <img src="static/img/mekanisme.png" width="100%"> |
+
+| Cara Kerja AI | Tahapan Pembuatan |
+| :---: | :---: |
+| <img src="static/img/how-it-work.jpeg" width="100%"> | <img src="static/img/how-to-make.jpeg" width="100%"> |
+
+---
+
 ## 🚀 Instalasi & Menjalankan di Komputer Lokal
 
 Bila Anda ingin mencoba menjalankan atau memodifikasi source-code secara lokal, ikuti langkah-langkah mudah di bawah ini.
